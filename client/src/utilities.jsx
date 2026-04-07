@@ -24,12 +24,15 @@ export const putTask = async( id, title, dueDate ) => {
 }
 
 export const getAllTasks = async() => {
-    let response = await api.get("tasks/")
-    if (response.status === 200){
-        return response.data // [{task},{task},{task}]
+    try{
+        let response = await api.get("tasks/")
+        if (response.status === 200){
+            return response.data // [{task},{task},{task}]
+        }
+    }    catch(error){
+        console.error(error)
+        return []
     }
-    console.error(response.data)
-    return []
 }
 
 export const createTask = async( title, dueDate ) => {
