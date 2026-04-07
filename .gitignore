@@ -1,0 +1,7 @@
+*.local.md
+.env
+.claude
+.playwright-mcp
+hooks
+CLAUDE.*
+.DS_Store

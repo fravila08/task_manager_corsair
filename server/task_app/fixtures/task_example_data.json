@@ -1,0 +1,110 @@
+[
+  {
+    "model": "task_app.task",
+    "pk": 1,
+    "fields": {
+      "title": "Set up project repository",
+      "due_date": "2026-04-10",
+      "user": 1
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 2,
+    "fields": {
+      "title": "Write unit tests for user authentication",
+      "due_date": "2026-04-12",
+      "user": 1
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 3,
+    "fields": {
+      "title": "Design database schema",
+      "due_date": "2026-04-08",
+      "user": 1
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 4,
+    "fields": {
+      "title": "Build React task list component",
+      "due_date": "2026-04-15",
+      "user": 2
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 5,
+    "fields": {
+      "title": "Configure Nginx reverse proxy",
+      "due_date": "2026-04-09",
+      "user": 2
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 6,
+    "fields": {
+      "title": "Deploy Docker containers to staging",
+      "due_date": "2026-04-20",
+      "user": 2
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 7,
+    "fields": {
+      "title": "Review pull requests from team",
+      "due_date": null,
+      "user": 1
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 8,
+    "fields": {
+      "title": "Update API documentation",
+      "due_date": "2026-04-18",
+      "user": 3
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 9,
+    "fields": {
+      "title": "Fix login token expiration bug",
+      "due_date": "2026-04-07",
+      "user": 3
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 10,
+    "fields": {
+      "title": "Conduct code review session",
+      "due_date": null,
+      "user": 3
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 11,
+    "fields": {
+      "title": "Migrate production database",
+      "due_date": "2026-04-25",
+      "user": 1
+    }
+  },
+  {
+    "model": "task_app.task",
+    "pk": 12,
+    "fields": {
+      "title": "Add pagination to task list endpoint",
+      "due_date": "2026-04-22",
+      "user": 2
+    }
+  }
+]

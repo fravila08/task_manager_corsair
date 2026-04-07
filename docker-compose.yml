@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres-container
+    environment:
+      - POSTGRES_USER=cp_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=task_db
+    ports:
+      - "5433:5432"
+  backend:
+    build: ./server
+    container_name: django-container
+    command: sh -c "gunicorn task_proj.wsgi --bind 0.0.0.0:8000 --reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+
+  frontend:
+    build: ./client
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./client/dist:/usr/share/nginx/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
