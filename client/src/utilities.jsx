@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: 'http://3.138.247.77/api/v1/'
+    baseURL: 'https://deployment-demo.com/api/v1/'
 })
 
 export const deleteATask = async( id ) => {
