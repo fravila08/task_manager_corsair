@@ -7,7 +7,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as s
 from task_proj.utilies import handle_exceptions
+from datetime import datetime, timedelta
+from .utilities import CookieAuthentication
 
+def create_time_for_cookie():
+    life_time = datetime.now() + timedelta(days=7) # token is valid for 1 week
+    format_time = life_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    return format_time
 # Create your views here.
 class CreateUser(APIView):
     authentication_classes = []
@@ -22,9 +28,20 @@ class CreateUser(APIView):
             new_user.full_clean()
             new_user.save()
             token = Token.objects.create(user=new_user)
-            return Response({"token":token.key, "email":new_user.email}, status=s.HTTP_201_CREATED)
+            # life_time key value http secure samesite
+            response = Response({"email":new_user.email}, status=s.HTTP_201_CREATED)
+            response.set_cookie(
+                key='token',
+                value=token.key,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie()
+            )
+            return response
         except Exception as e:
             return Response(e.args, status=s.HTTP_400_BAD_REQUEST)
+
 
 class LogIn(APIView):
     authentication_classes = []
@@ -36,13 +53,22 @@ class LogIn(APIView):
         data['username'] = request.data.get('email')
         user = authenticate(username=data.get('username'), password=data.get("password"))
         if user:
-            Token.objects.get_or_create(user=user)
-            return Response({"token":user.auth_token.key, "email":user.email})
+            token, _ = Token.objects.get_or_create(user=user)
+            response = Response({"email":user.email}, status=s.HTTP_201_CREATED)
+            response.set_cookie(
+                key='token',
+                value=token.key,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie()
+            )
+            return response
         else:
             return Response("No user matching credentials", status=s.HTTP_404_NOT_FOUND)
 
 class UserView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [CookieAuthentication]
     permission_classes = [IsAuthenticated]
 
 
@@ -51,7 +77,7 @@ class Info(UserView):
     @handle_exceptions
     def get(self, request):
         user = request.user
-        return Response({"token":user.auth_token.key, "email":user.email})
+        return Response({"email":user.email})
 
 class LogOut(UserView):
     
@@ -59,4 +85,6 @@ class LogOut(UserView):
     def post(self, request):
         user = request.user
         user.auth_token.delete()
-        return Response(f"{user.email} has been logged out")
+        response = Response(f"{user.email} has been logged out")
+        response.delete_cookie('token')
+        return response
