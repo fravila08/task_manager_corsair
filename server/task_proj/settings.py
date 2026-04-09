@@ -28,11 +28,11 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", None)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = eval(os.environ.get('DEBUG', 'True'))
 
-SESSION_COOKIE_SECURE=eval(os.environ.get("SESSION_COOKIE_SECURE"), 'False')
+SESSION_COOKIE_SECURE=eval(os.environ.get("SESSION_COOKIE_SECURE", 'False'))
 
-SESSION_COOKIE_HTTPONLY=eval(os.environ.get("SESSION_COOKIE_HTTPONLY"), 'False')
+SESSION_COOKIE_HTTPONLY=eval(os.environ.get("SESSION_COOKIE_HTTPONLY", 'False'))
 
-CSRF_COOKIE_SECURE=eval(os.environ.get("CSRF_COOKIE_SECURE"), 'False')
+CSRF_COOKIE_SECURE=eval(os.environ.get("CSRF_COOKIE_SECURE", 'False'))
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", '').split(',')
 
