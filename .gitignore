@@ -6,3 +6,4 @@ hooks
 CLAUDE.*
 .DS_Store
 .venv
+__pycache__

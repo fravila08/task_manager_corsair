@@ -6,12 +6,14 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as s
+from task_proj.utilies import handle_exceptions
 
 # Create your views here.
 class CreateUser(APIView):
     authentication_classes = []
     permission_classes = []
 
+    @handle_exceptions
     def post(self, request):
         data = request.data
         data['username'] = request.data.get('email')
@@ -28,6 +30,7 @@ class LogIn(APIView):
     authentication_classes = []
     permission_classes = []
 
+    @handle_exceptions
     def post(self, request):
         data = request.data
         data['username'] = request.data.get('email')
@@ -44,11 +47,15 @@ class UserView(APIView):
 
 
 class Info(UserView):
+    
+    @handle_exceptions
     def get(self, request):
         user = request.user
         return Response({"token":user.auth_token.key, "email":user.email})
 
 class LogOut(UserView):
+    
+    @handle_exceptions
     def post(self, request):
         user = request.user
         user.auth_token.delete()

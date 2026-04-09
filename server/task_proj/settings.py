@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
+load_dotenv("../.env")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,15 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!jxkbdorz5qq54f8fr=xc8$u+%n*!614q!ym7!#$g)bm)@zm^x'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", None)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = eval(os.environ.get('DEBUG', 'True'))
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '*']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", '').split(',')
 
 # Only for development testing - never use in production
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 
 # Application definition
 
@@ -83,11 +87,11 @@ WSGI_APPLICATION = 'task_proj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'task_db',
-        'USER': 'cp_user',
-        "PASSWORD":"password",
-        'HOST': 'postgres-container',
-        'PORT': '5432'
+        'NAME': os.environ.get('POSTGRES_NAME',''),
+        'USER': os.environ.get('POSTGRES_USER',''),
+        "PASSWORD":os.environ.get('POSTGRES_PASSWORD',''),
+        'HOST': os.environ.get('POSTGRES_HOST',''),
+        'PORT': os.environ.get('POSTGRES_PORT',''),
     }
 }
 
