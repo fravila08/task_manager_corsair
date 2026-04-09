@@ -59,29 +59,37 @@ export const logoutUser = async() => {
 }
 
 export const userConfirmation = async() => {
-    let response = await api.get('users/')
-    if (response.status === 200){
-        let user = response.data.email
-        console.log("SUCCESS")
-        return user
-    } else {
+    try{
+        let response = await api.get('users/')
+        if (response.status === 200){
+            let user = response.data.email
+            console.log("SUCCESS")
+            return user
+        } 
         console.error(response.data)
+        return null
+    } catch(error){
+        console.error(error)
         return null
     }
 }
 
 export const handleUserAuth = async( data, create ) => {
-    // url pattern users/create|login/
-    // body of request must hold {email,password}
-    let response = await api.post(`users/${create ? 'create' : 'login'}/`,
-        data
-    )
-    // response status of 201 | 200| 400 |404
-    if (response.status === 201 || response.status === 200){
-        return response.data.email
+    try{
+        let response = await api.post(`users/${create ? 'create' : 'login'}/`,
+            data
+        )
+        // response status of 201 | 200| 400 |404
+        if (response.status === 201 || response.status === 200){
+            return response.data.email
+        }
+        else{
+            console.error(response.data)
+            return null
+        }
     }
-    else{
-        console.error(response.data)
+    catch(error){
+        console.error(error)
         return null
     }
 }
