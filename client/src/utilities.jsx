@@ -5,6 +5,36 @@ export const api = axios.create({
     withCredentials: true,
 })
 
+const refreshAccessToken = async() => {
+    return axios.post(
+        'https://deployment-demo.com/api/v1/users/refresh/',
+        {},
+        { withCredentials:true }
+    )
+}
+// use(func1:true, func2:false)
+api.interceptors.response.use( // creation of interceptor
+    // success
+    (response) => response,
+
+    // failure
+    async (error) => {
+        const originalRequest = error.config
+        console.log(originalRequest)
+        if (error.response?.status === 401 && !originalRequest._retry){
+            originalRequest._retry = true
+
+            try{
+                await refreshAccessToken()
+                return api(originalRequest)
+            } catch (refreshError) {
+                return Promise.reject(refreshError)
+            }
+        }
+        return Promise.reject(error)
+    }
+)
+
 export const deleteATask = async( id ) => {
     let response = await api.delete(`tasks/${id}/`)
     if(response.status === 200){

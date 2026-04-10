@@ -17,6 +17,41 @@ def create_time_for_cookie(days=0, minutes=2):
     format_time = life_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
     return format_time
 
+class RefreshAccessToken(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh')
+        if not refresh_token:
+            return Response("No token present", status=s.HTTP_401_UNAUTHORIZED)
+        try:
+            refresh = RefreshToken(refresh_token)
+            new_access = str(refresh.access_token)
+            new_refresh = str(refresh)
+            response = Response(
+                {"message":"Token refreshed"}, status=s.HTTP_200_OK
+            )
+            response.set_cookie(
+                key='access',
+                value=new_access,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie(minutes=1)
+            )
+            response.set_cookie(
+                key='refresh',
+                value=new_refresh,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie(days=7)
+            )
+            return response
+        except TokenError as e:
+            return Response(str(e), status=s.HTTP_401_UNAUTHORIZED)
+
 # Create your views here.
 class CreateUser(APIView):
     authentication_classes = []
@@ -40,7 +75,7 @@ class CreateUser(APIView):
                 httponly=True,
                 secure=True,
                 samesite='Lax',
-                expires=create_time_for_cookie(minutes=15)
+                expires=create_time_for_cookie(minutes=1)
             )
             response.set_cookie(
                 key='refresh',
@@ -74,7 +109,7 @@ class LogIn(APIView):
                 httponly=True,
                 secure=True,
                 samesite='Lax',
-                expires=create_time_for_cookie(minutes=15)
+                expires=create_time_for_cookie(minutes=1)
             )
             response.set_cookie(
                 key='refresh',
@@ -82,7 +117,7 @@ class LogIn(APIView):
                 httponly=True,
                 secure=True,
                 samesite='Lax',
-                expires=create_time_for_cookie(minutes=15)
+                expires=create_time_for_cookie(minutes=1)
             )
             return response
         else:
