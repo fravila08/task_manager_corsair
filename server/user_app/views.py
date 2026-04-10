@@ -65,15 +65,24 @@ class LogIn(APIView):
         data['username'] = request.data.get('email')
         user = authenticate(username=data.get('username'), password=data.get("password"))
         if user:
-            token, _ = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
+            access = str(refresh.access_token)
             response = Response({"email":user.email}, status=s.HTTP_201_CREATED)
             response.set_cookie(
-                key='token',
-                value=token.key,
+                key='access',
+                value=access,
                 httponly=True,
                 secure=True,
                 samesite='Lax',
-                expires=create_time_for_cookie()
+                expires=create_time_for_cookie(minutes=15)
+            )
+            response.set_cookie(
+                key='refresh',
+                value=refresh,
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie(minutes=15)
             )
             return response
         else:
