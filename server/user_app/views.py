@@ -3,17 +3,20 @@ from .models import AppUser
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status as s
 from task_proj.utilies import handle_exceptions
 from datetime import datetime, timedelta
 from .utilities import CookieAuthentication
 
-def create_time_for_cookie():
-    life_time = datetime.now() + timedelta(days=7) # token is valid for 1 week
+def create_time_for_cookie(days=0, minutes=2):
+    life_time = datetime.now() + timedelta(days=days, minutes=minutes) # token is valid for 1 week
     format_time = life_time.strftime("%a, %d %b %Y %H:%M:%S GMT")
     return format_time
+
 # Create your views here.
 class CreateUser(APIView):
     authentication_classes = []
@@ -27,16 +30,25 @@ class CreateUser(APIView):
         try:
             new_user.full_clean()
             new_user.save()
-            token = Token.objects.create(user=new_user)
+            refresh = RefreshToken.for_user(new_user)
+            access = str(refresh.access_token)
             # life_time key value http secure samesite
             response = Response({"email":new_user.email}, status=s.HTTP_201_CREATED)
             response.set_cookie(
-                key='token',
-                value=token.key,
+                key='access',
+                value=access,
                 httponly=True,
                 secure=True,
                 samesite='Lax',
-                expires=create_time_for_cookie()
+                expires=create_time_for_cookie(minutes=15)
+            )
+            response.set_cookie(
+                key='refresh',
+                value=str(refresh),
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                expires=create_time_for_cookie(days=7)
             )
             return response
         except Exception as e:
