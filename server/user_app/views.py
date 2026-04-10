@@ -105,7 +105,15 @@ class LogOut(UserView):
     @handle_exceptions
     def post(self, request):
         user = request.user
-        user.auth_token.delete()
+        refresh_token = request.COOKIES.get("refresh")
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            except TokenError as e:
+                print(str(e))
+                pass
         response = Response(f"{user.email} has been logged out")
-        response.delete_cookie('token')
+        response.delete_cookie('access')
+        response.delete_cookie('refresh')
         return response
