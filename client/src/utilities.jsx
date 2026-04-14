@@ -5,6 +5,7 @@ export const api = axios.create({
     withCredentials: true,
 })
 
+// function post(url:string, body:Object, config:Object)
 const refreshAccessToken = async() => {
     return axios.post(
         'https://deployment-demo.com/api/v1/users/refresh/',
@@ -15,11 +16,15 @@ const refreshAccessToken = async() => {
 // use(func1:true, func2:false)
 api.interceptors.response.use( // creation of interceptor
     // success
-    (response) => response,
+    (response) => {
+        console.log("interceptor trigger for success")
+        return response
+    },
 
     // failure
     async (error) => {
         const originalRequest = error.config
+        console.log("interceptor trigger for failure")
         console.log(originalRequest)
         if (error.response?.status === 401 && !originalRequest._retry){
             originalRequest._retry = true
